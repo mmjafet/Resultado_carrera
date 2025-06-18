@@ -117,21 +117,19 @@
         <table>
             <thead>
                 <tr>
-                    <th>Position</th>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Last Name</th>
-                    <th>Category</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Elapsed Time</th>
+                    <th>Posicion</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Categoria</th>
+                    <th>Incio</th>
+                    <th>Final</th>
+                    <th>Tiempo Total</th>
                 </tr>
             </thead>
             <tbody>
                 {% for result in results %}
                 <tr class="position-{{ result.Position }}">
                     <td>{{ result.Position }}</td>
-                    <td>{{ result.IDParticipant }}</td>
                     <td>{{ result.NameParticipant }}</td>
                     <td>{{ result.LastName_1 }} {{ result.LastName_2 }}</td>
                     <td>{{ result.Category }}</td>
