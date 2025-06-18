@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Results</title>
+    <style>
+        :root {
+            /* Color scheme variables - adjust these to match your logo */
+            --primary-color: #005682;
+            --secondary-color: #e63946;
+            --accent-color: #f1faee;
+            --text-color: #1d3557;
+            --background-color: #f8f9fa;
+            --table-header: #d8e2dc;
+            --hover-color: #edf6f9;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        
+        .logo {
+            max-height: 100px;
+            border-radius: 5px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--accent-color);
+        }
+        
+        tr:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .position-1 {
+            background-color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        .position-2 {
+            background-color: #c0c0c0 !important;
+            font-weight: bold;
+        }
+        
+        .position-3 {
+            background-color: #cd7f32 !important;
+            font-weight: bold;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+        }
+        
+        .refresh-indicator {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/static/logo.jpeg" alt="Race Logo" class="logo">
+        <h1>Race Results</h1>
+    </div>
+    
+    {% if results %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Last Name</th>
+                    <th>Category</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Elapsed Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr class="position-{{ result.Position }}">
+                    <td>{{ result.Position }}</td>
+                    <td>{{ result.IDParticipant }}</td>
+                    <td>{{ result.NameParticipant }}</td>
+                    <td>{{ result.LastName_1 }} {{ result.LastName_2 }}</td>
+                    <td>{{ result.Category }}</td>
+                    <td>{{ result.StartTime }}</td>
+                    <td>{{ result.EndTime }}</td>
+                    <td>{{ result.ElapsedTime }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-results">No race results found.</p>
+    {% endif %}
+    
+    <div class="refresh-indicator">
+        Auto-refreshing: <span id="countdown">5</span>s
+    </div>
+
+    <script>
+        // Auto refresh page every 5 seconds
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        
+        function updateCountdown() {
+            countdown -= 1;
+            countdownElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                location.reload();
+            } else {
+                setTimeout(updateCountdown, 1000);
+            }
+        }
+        
+        setTimeout(updateCountdown, 1000);
+    </script>
+</body>
+</html>
