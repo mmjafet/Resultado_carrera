@@ -108,6 +108,51 @@
             border-radius: 5px;
             font-size: 0.8em;
         }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .logo {
+                max-height: 80px;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+            thead tr {
+                display: none; /* ocultar encabezado en móvil */
+            }
+            tbody tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--primary-color);
+                border-radius: 8px;
+                padding: 10px;
+                background: var(--accent-color);
+            }
+            tbody td {
+                padding-left: 50%;
+                position: relative;
+                text-align: left;
+                border: none;
+                border-bottom: 1px solid var(--secondary-color);
+                white-space: normal;
+            }
+            tbody td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                top: 12px;
+                font-weight: bold;
+                color: var(--primary-color);
+                white-space: nowrap;
+            }
+        }
     </style>
 </head>
 <body>
@@ -132,13 +177,13 @@
             <tbody>
                 {% for result in results %}
                 <tr class="position-{{ result.Position }}">
-                    <td>{{ result.Position }}</td>
-                    <td>{{ result.NameParticipant }}</td>
-                    <td>{{ result.LastName_1 }} {{ result.LastName_2 }}</td>
-                    <td>{{ result.Category }}</td>
-                    <td>{{ result.StartTime }}</td>
-                    <td>{{ result.EndTime }}</td>
-                    <td>{{ result.ElapsedTime }}</td>
+                    <td data-label="Posición">{{ result.Position }}</td>
+                    <td data-label="Nombre">{{ result.NameParticipant }}</td>
+                    <td data-label="Apellidos">{{ result.LastName_1 }} {{ result.LastName_2 }}</td>
+                    <td data-label="Categoría">{{ result.Category }}</td>
+                    <td data-label="Inicio">{{ result.StartTime }}</td>
+                    <td data-label="Final">{{ result.EndTime }}</td>
+                    <td data-label="Tiempo Total">{{ result.ElapsedTime }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
