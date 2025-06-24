@@ -4,7 +4,7 @@ import mysql.connector
 app = Flask(__name__, static_folder='static')
 
 def get_race_results():
-    # Conéctate a la base de datos con las nuevas credenciales
+    # Conéctate a la base de datos
     conn = mysql.connector.connect(
         host="sql10.freesqldatabase.com",
         user="sql10786405",
@@ -24,22 +24,21 @@ def get_race_results():
         p.Category,
         t.StartTime, 
         t.EndTime, 
-        t.ElapsedTime, 
-        t.Position
+        t.TotalTime AS ElapsedTime
     FROM 
         Participants p
     JOIN 
-        TimeResults t ON p.IDParticipant = t.IDParticipant
+        TimeResults t 
+      ON p.IDParticipant = t.IDParticipant
     ORDER BY 
-        t.Position ASC, t.ElapsedTime ASC
+        t.TotalTime ASC
     """
     cursor.execute(query)
     results = cursor.fetchall()
 
-    # Cierra las conexiones
     cursor.close()
     conn.close()
-    
+
     return results
 
 @app.route('/')
