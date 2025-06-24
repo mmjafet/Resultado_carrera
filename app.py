@@ -1,21 +1,21 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import mysql.connector
 
 app = Flask(__name__, static_folder='static')
 
-def get_race_results():
-    # Connect to the database
+def get_race_results(search_term=None):
+    # Conéctate a la base de datos
     conn = mysql.connector.connect(
         host="sql10.freesqldatabase.com",
-        user="sql10785119",
-        password="m5EA4FFDQT",
-        database="sql10785119",
+        user="sql10786405",
+        password="ygewRIuATj",
+        database="sql10786405",
         port=3306
     )
     cursor = conn.cursor(dictionary=True)
 
-    # Query to join the tables and order by position
-    query = """
+    # Base query
+    base_query = """
     SELECT 
         p.IDParticipant, 
         p.NameParticipant, 
@@ -24,29 +24,42 @@ def get_race_results():
         p.Category,
         t.StartTime, 
         t.EndTime, 
-        t.ElapsedTime, 
-        t.Position
+        t.TotalTime AS ElapsedTime,
+        @rank := @rank + 1 AS Position
     FROM 
         Participants p
     JOIN 
-        TimeResults t ON p.IDParticipant = t.IDParticipant
-    ORDER BY 
-        t.Position ASC, t.ElapsedTime ASC
+        TimeResults t ON p.IDParticipant = t.IDParticipant,
+        (SELECT @rank := 0) r
     """
-
-    cursor.execute(query)
+    
+    # Add search condition if search term is provided
+    if search_term:
+        search_condition = """
+        WHERE 
+            p.NameParticipant LIKE %s OR 
+            p.LastName_1 LIKE %s OR 
+            p.LastName_2 LIKE %s OR 
+            p.IDParticipant LIKE %s
+        """
+        search_param = f"%{search_term}%"
+        query = base_query + search_condition + " ORDER BY t.TotalTime ASC"
+        cursor.execute(query, (search_param, search_param, search_param, search_param))
+    else:
+        query = base_query + " ORDER BY t.TotalTime ASC"
+        cursor.execute(query)
+    
     results = cursor.fetchall()
-
-    # Close connections
     cursor.close()
     conn.close()
-    
+
     return results
 
 @app.route('/')
 def index():
-    results = get_race_results()
-    return render_template('index.html', results=results)
+    search_term = request.args.get('search', None)
+    results = get_race_results(search_term)
+    return render_template('index.html', results=results, search_term=search_term)
 
 if __name__ == '__main__':
     app.run(debug=True)
