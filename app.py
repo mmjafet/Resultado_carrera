@@ -4,17 +4,17 @@ import mysql.connector
 app = Flask(__name__, static_folder='static')
 
 def get_race_results():
-    # Connect to the database
+    # Conéctate a la base de datos con las nuevas credenciales
     conn = mysql.connector.connect(
         host="sql10.freesqldatabase.com",
-        user="sql10785119",
-        password="m5EA4FFDQT",
-        database="sql10785119",
+        user="sql10786405",
+        password="ygewRIuATj",
+        database="sql10786405",
         port=3306
     )
     cursor = conn.cursor(dictionary=True)
 
-    # Query to join the tables and order by position
+    # Consulta para obtener resultados
     query = """
     SELECT 
         p.IDParticipant, 
@@ -33,11 +33,10 @@ def get_race_results():
     ORDER BY 
         t.Position ASC, t.ElapsedTime ASC
     """
-
     cursor.execute(query)
     results = cursor.fetchall()
 
-    # Close connections
+    # Cierra las conexiones
     cursor.close()
     conn.close()
     
