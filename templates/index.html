@@ -1,170 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Race Results</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Resultados de la Carrera</title>
     <style>
-        :root {
-            /* Color scheme variables - adjust these to match your logo */
-            --primary-color: #005682;
-            --secondary-color: #e63946;
-            --accent-color: #f1faee;
-            --text-color: #1d3557;
-            --background-color: #f8f9fa;
-            --table-header: #d8e2dc;
-            --hover-color: #edf6f9;
-        }
-        
         body {
             font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
-        
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            gap: 20px;
-        }
-        
-        .logo {
-            max-height: 100px;
-            border-radius: 5px;
-        }
-        
-        h1 {
-            color: var(--primary-color);
+            background: #f7f9fc;
             margin: 0;
+            padding: 20px;
+            color: #333;
         }
-        
+        h1 {
+            text-align: center;
+            color: #004010; /* verde oscuro */
+            margin-bottom: 10px;
+        }
         table {
-            width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 6px;
             overflow: hidden;
+            border: 3px solid #004010; /* borde verde oscuro */
         }
-        
         th, td {
             padding: 12px 15px;
-            text-align: left;
+            text-align: center;
+            border-bottom: 1px solid #94CA76; /* borde verde claro */
         }
-        
         th {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.9em;
+            background-color: #94CA76; /* verde claro */
+            color: #004010; /* texto verde oscuro */
+            font-weight: 600;
+            border-bottom: 3px solid #004010;
         }
-        
-        tr:nth-child(even) {
-            background-color: var(--accent-color);
-        }
-        
         tr:hover {
-            background-color: var(--hover-color);
+            background-color: #e6f2d9; /* verde muy suave para hover */
         }
-        
-        .position-1 {
-            background-color: #ffd700 !important;
+        caption {
+            caption-side: top;
+            font-size: 1.3em;
+            margin-bottom: 10px;
             font-weight: bold;
+            color: #004010; /* verde oscuro */
         }
-        
-        .position-2 {
-            background-color: #c0c0c0 !important;
-            font-weight: bold;
-        }
-        
-        .position-3 {
-            background-color: #cd7f32 !important;
-            font-weight: bold;
-        }
-        
         .no-results {
             text-align: center;
-            padding: 20px;
-            font-size: 1.2em;
-            color: var(--secondary-color);
-        }
-        
-        .refresh-indicator {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
+            font-style: italic;
+            margin-top: 40px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <img src="/static/logo.jpeg" alt="Race Logo" class="logo">
-        <h1>Race Results</h1>
-    </div>
-    
-    {% if results %}
+
+    <h1>Resultados de la Carrera</h1>
+
+    {% if results and results|length > 0 %}
         <table>
+            <caption>Lista de participantes y tiempos</caption>
             <thead>
                 <tr>
-                    <th>Posicion</th>
+                    <th>ID Participante</th>
                     <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>Categoria</th>
-                    <th>Incio</th>
-                    <th>Final</th>
-                    <th>Tiempo Total</th>
+                    <th>Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>Categoría</th>
+                    <th>Hora de Inicio</th>
+                    <th>Hora de Fin</th>
+                    <th>Tiempo Transcurrido</th>
                 </tr>
             </thead>
             <tbody>
-                {% for result in results %}
-                <tr class="position-{{ result.Position }}">
-                    <td>{{ result.Position }}</td>
-                    <td>{{ result.NameParticipant }}</td>
-                    <td>{{ result.LastName_1 }} {{ result.LastName_2 }}</td>
-                    <td>{{ result.Category }}</td>
-                    <td>{{ result.StartTime }}</td>
-                    <td>{{ result.EndTime }}</td>
-                    <td>{{ result.ElapsedTime }}</td>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row.IDParticipant }}</td>
+                    <td>{{ row.NameParticipant }}</td>
+                    <td>{{ row.LastName_1 }}</td>
+                    <td>{{ row.LastName_2 }}</td>
+                    <td>{{ row.Category }}</td>
+                    <td>{{ row.StartTime }}</td>
+                    <td>{{ row.EndTime }}</td>
+                    <td>{{ row.ElapsedTime }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p class="no-results">No race results found.</p>
+        <p class="no-results">No hay resultados para mostrar.</p>
     {% endif %}
-    
-    <div class="refresh-indicator">
-        Auto-refreshing: <span id="countdown">5</span>s
-    </div>
 
-    <script>
-        // Auto refresh page every 5 seconds
-        let countdown = 5;
-        const countdownElement = document.getElementById('countdown');
-        
-        function updateCountdown() {
-            countdown -= 1;
-            countdownElement.textContent = countdown;
-            
-            if (countdown <= 0) {
-                location.reload();
-            } else {
-                setTimeout(updateCountdown, 1000);
-            }
-        }
-        
-        setTimeout(updateCountdown, 1000);
-    </script>
 </body>
 </html>
