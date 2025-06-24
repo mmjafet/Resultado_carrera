@@ -44,6 +44,35 @@
             margin: 0;
         }
         
+        /* Estilos para la barra de búsqueda */
+        .search-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .search-container input[type="text"] {
+            padding: 10px;
+            width: 50%;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+        
+        .search-container button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .search-container button:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -109,6 +138,18 @@
             font-size: 0.8em;
         }
 
+        .refresh-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .refresh-toggle {
+            cursor: pointer;
+            color: white;
+            text-decoration: underline;
+        }
+
         /* Responsividad */
         @media (max-width: 768px) {
             body {
@@ -120,6 +161,9 @@
             }
             .logo {
                 max-height: 80px;
+            }
+            .search-container input[type="text"] {
+                width: 60%;
             }
             table, thead, tbody, th, td, tr {
                 display: block;
@@ -161,6 +205,14 @@
         <h1>Race Results</h1>
     </div>
     
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+        <form action="/" method="GET" id="search-form">
+            <input type="text" name="search" id="search-input" placeholder="Buscar por nombre o ID..." value="{{ request.args.get('search', '') }}">
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+    
     {% if results %}
         <table>
             <thead>
@@ -193,24 +245,52 @@
     {% endif %}
     
     <div class="refresh-indicator">
-        Auto-refreshing: <span id="countdown">5</span>s
+        <div class="refresh-controls">
+            Auto-refreshing: <span id="countdown">5</span>s
+            <span class="refresh-toggle" id="refresh-toggle">(Pausar)</span>
+        </div>
     </div>
 
     <script>
         // Auto refresh page every 5 seconds
         let countdown = 5;
         const countdownElement = document.getElementById('countdown');
+        const refreshToggle = document.getElementById('refresh-toggle');
+        let autoRefreshEnabled = true;
         
         function updateCountdown() {
+            if (!autoRefreshEnabled) return;
+            
             countdown -= 1;
             countdownElement.textContent = countdown;
             
             if (countdown <= 0) {
-                location.reload();
+                // Obtenemos el valor ACTUAL del campo de búsqueda justo antes de recargar
+                const searchInput = document.getElementById('search-input');
+                const currentSearchValue = searchInput.value;
+                
+                // Preservar los parámetros de búsqueda al refrescar
+                if (currentSearchValue) {
+                    // Si hay un término de búsqueda, construir la URL con ese parámetro
+                    window.location.href = '/?search=' + encodeURIComponent(currentSearchValue);
+                } else {
+                    // Si no hay término de búsqueda, recargar la página normal
+                    window.location.href = '/';
+                }
             } else {
                 setTimeout(updateCountdown, 1000);
             }
         }
+        
+        refreshToggle.addEventListener('click', function() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            refreshToggle.textContent = autoRefreshEnabled ? "(Pausar)" : "(Reanudar)";
+            
+            if (autoRefreshEnabled) {
+                countdown = 5;
+                updateCountdown();
+            }
+        });
         
         setTimeout(updateCountdown, 1000);
     </script>

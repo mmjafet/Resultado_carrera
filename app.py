@@ -59,7 +59,8 @@ def get_race_results(search_term=None):
 def index():
     search_term = request.args.get('search', None)
     results = get_race_results(search_term)
-    return render_template('index.html', results=results, search_term=search_term)
+    # Pasar request a la plantilla para acceder a request.args
+    return render_template('index.html', results=results, request=request)
 
 if __name__ == '__main__':
     app.run(debug=True)
