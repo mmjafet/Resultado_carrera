@@ -3,11 +3,7 @@ import mysql.connector
 
 app = Flask(__name__, static_folder='static')
 
-<<<<<<< HEAD
 def get_race_results(search_term=None):
-=======
-def get_race_results():
->>>>>>> d8cefe237ad5557a0cc56c897332c2da55a61540
     # Conéctate a la base de datos
     conn = mysql.connector.connect(
         host="sql10.freesqldatabase.com",
@@ -18,13 +14,8 @@ def get_race_results():
     )
     cursor = conn.cursor(dictionary=True)
 
-<<<<<<< HEAD
     # Base query
     base_query = """
-=======
-    # Consulta para obtener resultados
-    query = """
->>>>>>> d8cefe237ad5557a0cc56c897332c2da55a61540
     SELECT 
         p.IDParticipant, 
         p.NameParticipant, 
@@ -33,7 +24,6 @@ def get_race_results():
         p.Category,
         t.StartTime, 
         t.EndTime, 
-<<<<<<< HEAD
         t.TotalTime AS ElapsedTime,
         @rank := @rank + 1 AS Position
     FROM 
@@ -60,20 +50,6 @@ def get_race_results():
         cursor.execute(query)
     
     results = cursor.fetchall()
-=======
-        t.TotalTime AS ElapsedTime
-    FROM 
-        Participants p
-    JOIN 
-        TimeResults t 
-      ON p.IDParticipant = t.IDParticipant
-    ORDER BY 
-        t.TotalTime ASC
-    """
-    cursor.execute(query)
-    results = cursor.fetchall()
-
->>>>>>> d8cefe237ad5557a0cc56c897332c2da55a61540
     cursor.close()
     conn.close()
 
