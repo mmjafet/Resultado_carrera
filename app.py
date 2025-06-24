@@ -14,7 +14,7 @@ def get_race_results(search_term=None):
     )
     cursor = conn.cursor(dictionary=True)
 
-    # Base query
+    # Base query - corregida para usar ElapsedTime en lugar de TotalTime
     base_query = """
     SELECT 
         p.IDParticipant, 
@@ -24,13 +24,12 @@ def get_race_results(search_term=None):
         p.Category,
         t.StartTime, 
         t.EndTime, 
-        t.TotalTime AS ElapsedTime,
-        @rank := @rank + 1 AS Position
+        t.ElapsedTime,
+        t.Position
     FROM 
         Participants p
     JOIN 
-        TimeResults t ON p.IDParticipant = t.IDParticipant,
-        (SELECT @rank := 0) r
+        TimeResults t ON p.IDParticipant = t.IDParticipant
     """
     
     # Add search condition if search term is provided
@@ -43,10 +42,10 @@ def get_race_results(search_term=None):
             p.IDParticipant LIKE %s
         """
         search_param = f"%{search_term}%"
-        query = base_query + search_condition + " ORDER BY t.TotalTime ASC"
+        query = base_query + search_condition + " ORDER BY t.ElapsedTime ASC"
         cursor.execute(query, (search_param, search_param, search_param, search_param))
     else:
-        query = base_query + " ORDER BY t.TotalTime ASC"
+        query = base_query + " ORDER BY t.ElapsedTime ASC"
         cursor.execute(query)
     
     results = cursor.fetchall()
